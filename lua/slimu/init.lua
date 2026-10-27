@@ -66,10 +66,9 @@ end
 
 local function send_line()
 	-- 1. Fail early if connection isn't configured, matching your send_cell logic
-	if not vim.b.slimu_config then
-		vim.api.nvim_echo({
-			{ "connection didn't set, please run :SlimuConfig first", "WarningMsg" },
-		}, true, {})
+	local config_state = util.get_config()
+
+	if not config_state then
 		return
 	end
 
@@ -100,10 +99,9 @@ local function send_range(startline, endline)
 end
 
 local function send_cell()
-	if not vim.b.slimu_config then
-		vim.api.nvim_echo({
-			{ "connection didn't set, please run :SlimuConfig first", "WarningMsg" },
-		}, true, {})
+	local config_state = util.get_config()
+
+	if not config_state then
 		return
 	end
 	local delim = util.resolve("cell_delimiter")
@@ -123,10 +121,9 @@ end
 
 local function send_selection()
 	-- 1. Fail early if connection isn't configured
-	if not vim.b.slimu_config then
-		vim.api.nvim_echo({
-			{ "connection didn't set, please run :SlimuConfig first", "WarningMsg" },
-		}, true, {})
+	local config_state = util.get_config()
+
+	if not config_state then
 		return
 	end
 
@@ -172,10 +169,9 @@ end
 -- I adopted this design purely out of necessity.
 -- Because of the buffer limitation of pty
 local function send_to_cursor()
-	if not vim.b.slimu_config then
-		vim.api.nvim_echo({
-			{ "connection didn't set, please run :SlimuConfig first", "WarningMsg" },
-		}, true, {})
+	local config_state = util.get_config()
+
+	if not config_state then
 		return
 	end
 	local delim = util.resolve("cell_delimiter")

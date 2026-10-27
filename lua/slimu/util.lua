@@ -19,7 +19,7 @@ function M.system(argv, input)
 	local result = vim.system(argv, { text = true, stdin = input }):wait()
 
 	if result.code ~= 0 then
-		vim.notify(("slime: %s failed (code %d)\n%s"):format(argv[1], result.code, result.stderr), vim.log.levels.WARN)
+		vim.notify(("slimu: %s failed (code %d)\n%s"):format(argv[1], result.code, result.stderr), vim.log.levels.WARN)
 	end
 
 	return result.stdout
@@ -36,6 +36,19 @@ function M.bracketed_paste(text)
 		wrapped = "\27[200~" .. trimmed .. "\27[201~",
 		had_newline = had,
 	}
+end
+
+function M.get_config()
+	local config = vim.b.slimu_config
+
+	if not config or not config.target or not config[config.target] or not config[config.target].session then
+		vim.api.nvim_echo({
+			{ "connection didn't set, please run :SlimuConfig to configure", "WarningMsg" },
+		}, true, {})
+		return nil
+	end
+
+	return config[config.target].session
 end
 
 return M

@@ -2,26 +2,26 @@ local util = require("slimu.util")
 
 local M = {}
 
-M.defaults = { socket_name = "default", target_pane = "" }
+M.defaults = { session = "default", target_pane = "" }
 
---- Build the tmux argv prefix from a socket name.
+--- Build the tmux argv prefix from a session name.
 --- Absolute path -> { "tmux", "-S", path }; otherwise { "tmux", "-L", name }.
-local function target_cmd(socket_name)
-	if socket_name:sub(1, 1) == "/" then
-		return { "tmux", "-S", socket_name }
+local function target_cmd(session)
+	if session:sub(1, 1) == "/" then
+		return { "tmux", "-S", session }
 	end
-	return { "tmux", "-L", socket_name }
+	return { "tmux", "-L", session }
 end
 
 --- Run a tmux subcommand. `args` is a list of strings appended to the prefix.
 --- `input` is optional stdin.
 local function run(cfg, args, input)
-	local argv = vim.list_extend(target_cmd(cfg.socket_name), args)
+	local argv = vim.list_extend(target_cmd(cfg.session), args)
 	return util.system(argv, input)
 end
 
 local function run_silent(cfg, args, input)
-	local argv = target_cmd(cfg.socket_name)
+	local argv = target_cmd(cfg.session)
 	vim.list_extend(argv, args)
 	return vim.system(argv, { text = true, stdin = input }):wait()
 end
@@ -60,11 +60,11 @@ M.send = function(cfg, text)
 end
 
 M.configure = function(cfg)
-	vim.ui.input({ prompt = "tmux socket name or path: ", default = cfg.socket_name }, function(name)
+	vim.ui.input({ prompt = "tmux session name or path: ", default = cfg.session }, function(name)
 		if name == nil then
 			return
 		end
-		cfg.socket_name = name
+		cfg.session = name
 
 		local panes = M.list_panes(cfg)
 		vim.ui.select(panes, {
@@ -78,7 +78,7 @@ M.configure = function(cfg)
 			end
 			-- vim-slime parity: take first whitespace-delimited token
 			cfg.target_pane = vim.split(choice, "%s+")[1]
-			vim.notify(("slimu tmux: %s @ %s"):format(cfg.target_pane, cfg.socket_name))
+			vim.notify(("slimu tmux: %s @ %s"):format(cfg.target_pane, cfg.session))
 		end)
 	end)
 end

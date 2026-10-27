@@ -2,7 +2,7 @@ local util = require("slimu.util")
 
 local M = {}
 
-M.defaults = { target = "zmx", session = "ipython", cell_delimiter = "#%%" }
+M.defaults = { target = "zmx", cell_delimiter = "#%%" }
 
 function M.bracketed_paste(text)
 	local trimmed = text:gsub("(\r\n|\r|\n)$", "")
